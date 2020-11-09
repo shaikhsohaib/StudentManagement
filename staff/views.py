@@ -3,8 +3,14 @@ from __future__ import unicode_literals
 # from django.shortcuts import render
 
 from rest_framework.generics import (CreateAPIView, GenericAPIView)
+
 from .serializers import (StaffRegisterSerializer, StaffLoginSerializer)
+from parent.serializers import ParentSerializer
+# from parent.model import Staff
+
 from .models import Staff
+from parent.models import Parent
+
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -51,3 +57,23 @@ class StaffSignInAPI(GenericAPIView):
             return Response(response_data, status.HTTP_302_FOUND)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class ParentSignUpAPI(CreateAPIView):
+    serializer_class = ParentSerializer
+
+    def post(self, request, *args, **kwargs):
+        parent_serializer = self.get_serializer(data=request.data)
+
+        if parent_serializer.is_valid():
+            parent_serializer.save()
+            parent_object = Parent.objects.get(email=request.data["email"])
+            parent_response = {
+                "id": parent_object.id,
+                "firstname": parent_object.firstname,
+                "lastname": parent_object.lastname,
+                "gender": parent_object.gender
+            }
+            return Response(parent_response, status.HTTP_200_OK)
+        else:
+            return Response(parent_serializer.errors, status.HTTP_400_BAD_REQUEST)
