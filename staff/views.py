@@ -103,7 +103,6 @@ class StudentSignUpAPI(CreateAPIView):
             }
 
             return Response(student_response, status.HTTP_200_OK)
-            # return Response(request.data)
         else:
             return Response(student_serializer.errors, status.HTTP_400_BAD_REQUEST)
 
