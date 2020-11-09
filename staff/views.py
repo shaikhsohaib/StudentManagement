@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 # from django.shortcuts import render
 
-from rest_framework.generics import (CreateAPIView, GenericAPIView)
+from rest_framework.generics import (CreateAPIView, GenericAPIView, UpdateAPIView)
 
-from .serializers import (StaffRegisterSerializer, StaffLoginSerializer)
+from .serializers import (StaffRegisterSerializer, StaffLoginSerializer, StaffUpdateSerializer)
 from parent.serializers import ParentSerializer
 from student.serializers import StudentSerializer
 
@@ -58,6 +58,33 @@ class StaffSignInAPI(GenericAPIView):
             return Response(response_data, status.HTTP_302_FOUND)
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class StaffUpdateAPI(UpdateAPIView):
+    serializer_class = StaffUpdateSerializer
+
+    def get_queryset(self):
+        stu_id = self.kwargs['pk']
+        return Staff.objects.filter(id=stu_id)
+
+    def post(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.firstname = request.data["firstname"]
+        instance.lastname = request.data["lastname"]
+        instance.age = request.data["age"]
+        instance.gender = request.data["gender"]
+        # instance.password = request.data["password"]
+        instance.email = request.data['email']
+
+        serializer = self.get_serializer(instance, data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            self.partial_update(serializer)
+
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+
 
 
 class ParentSignUpAPI(CreateAPIView):

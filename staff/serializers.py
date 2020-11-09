@@ -43,3 +43,15 @@ class StaffLoginSerializer(serializers.Serializer):
             return attrs
         else:
             raise serializers.ValidationError()
+
+
+class StaffUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Staff
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "contact",
+            "email"
+        ]

@@ -1,0 +1,58 @@
+Error & Solutions for Only StudentCRUDProject
+
+1:When we create custom Model using AbstractUser and BaseUserManager.
+After that we do make migrations and migrate.
+
+“WE GET BELOW ERROR’S”
+
+SystemCheckError: System check identified some issues:
+
+ERRORS:
+StudentApp.User.groups: (fields.E304) Reverse accessor for 'User.groups' clashes with reverse accessor for 'User.groups'.
+        HINT: Add or change a related_name argument to the definition for 'User.groups' or 'User.groups'.
+StudentApp.User.user_permissions: (fields.E304) Reverse accessor for 'User.user_permissions' clashes with reverse accessor for 'User.user_permissions'.
+        HINT: Add or change a related_name argument to the definition for 'User.user_permissions' or 'User.user_permissions'.
+auth.User.groups: (fields.E304) Reverse accessor for 'User.groups' clashes with reverse accessor for 'User.groups'.
+        HINT: Add or change a related_name argument to the definition for 'User.groups' or 'User.groups'.
+auth.User.user_permissions: (fields.E304) Reverse accessor for 'User.user_permissions' clashes with reverse accessor for 'User.user_permissions'.
+        HINT: Add or change a related_name argument to the definition for 'User.user_permissions' or 'User.user_permissions'.
+
+“SOLUTION FOR ABOVE ERROR”
+
+Add below into settings.py file of Django folder:
+
+1: AUTH_USER_MODEL = ‘app name.classname(classname from models.py)’
+Ex: AUTH_USER_MODEL = ’StudentApp.User’
+
+2: python manage.py makemigrations
+
+3: python manage.py migrate
+
+——————————————————————————————————————
+
+2: ERROR -> django.db.utils.IntegrityError: NOT NULL constraint failed: StudentApp_user.age
+
+“Solution”
+
+1: Check the number of arguments passed in def create_user(self) function
+2: Number of attribute created in Custom User Model I.e
+	class User(AbstractUser)
+    Must also be same in BaseUserManager Class
+
+——————————————————————————————————————
+
+3: ERROR-> You are trying to add a non-nullable field 'parent_id' to student without a default; we can't do that (the database needs something to populate existing rows).
+
+“solution”
+
+Make parent_id to null=True
+
+——————————————————————————————————————
+
+4: ERROR->  raise NotImplementedError('`update()` must be implemented.')
+NotImplementedError: `update()` must be implemented.
+
+
+“solution”
+
+You should user a ModelSerializer here instead of simple Serializer. 
