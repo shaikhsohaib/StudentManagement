@@ -60,7 +60,7 @@ class StaffSignInAPI(GenericAPIView):
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class Parent_StudentSignUpAPI(CreateAPIView):
+class ParentSignUpAPI(CreateAPIView):
     serializer_class = ParentSerializer
 
     def post(self, request, *args, **kwargs):
@@ -77,9 +77,33 @@ class Parent_StudentSignUpAPI(CreateAPIView):
                 "lastname": parent_object.lastname,
                 "gender": parent_object.gender
             }
-
             return Response(parent_response, status.HTTP_200_OK)
         else:
             return Response(parent_serializer.errors, status.HTTP_400_BAD_REQUEST)
 
+
+class StudentSignUpAPI(CreateAPIView):
+    serializer_class = StudentSerializer
+
+    def post(self, request, *args, **kwargs):
+        student_serializer = self.get_serializer(data=request.data)
+
+        if student_serializer.is_valid():
+            student_serializer.save()
+
+            student_object = Student.objects.get(email=request.data["email"])
+
+            student_response = {
+                "id": student_object.id,
+                "firstname": student_object.firstname,
+                "lastname": student_object.lastname,
+                "email": student_object.email,
+                "gender": student_object.gender,
+                "contact": student_object.contact
+            }
+
+            return Response(student_response, status.HTTP_200_OK)
+            # return Response(request.data)
+        else:
+            return Response(student_serializer.errors, status.HTTP_400_BAD_REQUEST)
 
