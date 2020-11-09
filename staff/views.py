@@ -6,10 +6,11 @@ from rest_framework.generics import (CreateAPIView, GenericAPIView)
 
 from .serializers import (StaffRegisterSerializer, StaffLoginSerializer)
 from parent.serializers import ParentSerializer
-# from parent.model import Staff
+from student.serializers import StudentSerializer
 
 from .models import Staff
 from parent.models import Parent
+from student.models import Student
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -59,7 +60,7 @@ class StaffSignInAPI(GenericAPIView):
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class ParentSignUpAPI(CreateAPIView):
+class Parent_StudentSignUpAPI(CreateAPIView):
     serializer_class = ParentSerializer
 
     def post(self, request, *args, **kwargs):
@@ -67,13 +68,18 @@ class ParentSignUpAPI(CreateAPIView):
 
         if parent_serializer.is_valid():
             parent_serializer.save()
+
             parent_object = Parent.objects.get(email=request.data["email"])
+
             parent_response = {
                 "id": parent_object.id,
                 "firstname": parent_object.firstname,
                 "lastname": parent_object.lastname,
                 "gender": parent_object.gender
             }
+
             return Response(parent_response, status.HTTP_200_OK)
         else:
             return Response(parent_serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
